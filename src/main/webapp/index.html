@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Type" content="text/html">
+    <title>Title</title>
+    <script language="javascript" type="text/javascript">
+        var echo_webscoket;
+
+        function init() {
+            output = document.getElementById("output");
+        }
+
+        function send_echo() {
+            var wsUri = "ws://localhost:8080/echo";
+            wirteToScreen(" Connection to " + wsUri);
+            echo_webscoket = new WebSocket(wsUri);
+
+            echo_webscoket.open = function (evt) {
+                wirteToScreen("Connected!")
+                doSend(textID.value);
+            };
+
+            echo_webscoket.onmessage = function (evt) {
+                wirteToScreen("Received message:" + evt.data);
+                echo_webscoket.close();
+            };
+
+            echo_webscoket.onerror = function (evt) {
+                wirteToScreen('<span style = "color:red;">Error:</span>' + evt.data);
+                echo_webscoket.close();
+            }
+        }
+        function doSend(message) {
+            echo_webscoket.send(message);
+            wirteToScreen("Send message:" + message);
+        }
+
+        function wirteToScreen(message) {
+            var pre = document.createElement("p");
+            pre.style.wordWrap = "break-word";
+            pre.innerHTML = message;
+            output.appendChild(pre);
+        }
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body>
+<div style="text-align: left">
+    <form action="">
+        <input onclick="send_echo()" value="Press to send" type="button">
+        <input id="textID" name="message" value="Hello Web Sockets" type="text">
+    </form>
+</div>
+<div id="output"></div>
+
+</body>
+</html>
